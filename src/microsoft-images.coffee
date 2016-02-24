@@ -25,7 +25,7 @@ Image = (client, auth, params) ->
             return
           try
             images = JSON.parse(body).d.results
-            image = msg.random images
+            image = client.random images
             callback image.MediaUrl
           catch error
             callback err, body
