@@ -28,7 +28,6 @@ Image = (client, auth, params) ->
             image = msg.random images
             callback image.MediaUrl
           catch error
-            console.log(err, res, body)
             callback err, body
 
     getImg(params, callback)
