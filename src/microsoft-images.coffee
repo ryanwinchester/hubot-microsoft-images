@@ -34,7 +34,7 @@ Image = (client, auth, params) ->
 
 
 module.exports = (robot) ->
-  robot.respond /image (.*)/i, (msg) ->
+  robot.respond /(?:image|img) (?:me )?(.*)/i, (msg) ->
     query = msg.match[1]?.trim()
 
     params =
