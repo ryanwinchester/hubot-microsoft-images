@@ -1,6 +1,6 @@
 # hubot-microsoft-images
 
-Allows Hubot to know many languages using Microsoft Translator
+Allows Hubot to search for images
 
 See [`src/microsoft-images.coffee`](src/microsoft-images.coffee) for full documentation.
 

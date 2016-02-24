@@ -1,7 +1,7 @@
 {
   "name": "hubot-microsoft-images",
   "description": "Bing image search",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Ryan Winchester <fungku@gmail.com>",
   "license": "MIT",
   "keywords": "hubot, hubot-scripts, images, image, microsoft, bing",

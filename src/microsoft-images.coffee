@@ -13,23 +13,29 @@ ADULT = process.env.HUBOT_BING_IMAGES_ADULT || "Strict"
 
 IMAGE_SEARCH_URL = "https://api.datamarket.azure.com/Bing/Search/v1/Image"
 
-Image = (client, authHeader, params) ->
+Image = (client, auth, params) ->
   return (callback) ->
     getImg = (params, callback) ->
       client.http(IMAGE_SEARCH_URL)
         .query(params)
-        .headers(authHeader)
+        .headers(Authorization: "Basic #{auth}")
         .get() (err, res, body) ->
           if err
             callback "Failed to search: " + err
             return
-          callback null, url
+          try
+            images = JSON.parse(body).d.results
+            image = msg.random images
+            callback image.MediaUrl
+          catch error
+            console.log(err, res, body)
+            callback err, body
 
     getImg(params, callback)
 
 
 module.exports = (robot) ->
-  robot.respond /image/i, (msg) ->
+  robot.respond /image (.*)/i, (msg) ->
     query = msg.match[1]?.trim()
 
     params =
@@ -38,9 +44,9 @@ module.exports = (robot) ->
       $format: "json"
       $top: 25
 
-    authHeader = Authorization: "Bearer #{ACCOUNT_KEY}"
+    auth = new Buffer(":#{ACCOUNT_KEY}").toString('base64')
 
-    Image(msg, authHeader, params) (err, url) ->
+    Image(msg, auth, params) (err, url) ->
       if err
         msg.send err
         robot.emit 'error', err
