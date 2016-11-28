@@ -11,22 +11,22 @@
 ACCOUNT_KEY = process.env.HUBOT_BING_IMAGES_ACCOUNT_KEY
 ADULT = process.env.HUBOT_BING_IMAGES_ADULT || "Strict"
 
-IMAGE_SEARCH_URL = "https://api.datamarket.azure.com/Bing/Search/v1/Image"
+IMAGE_SEARCH_URL = "https://api.cognitive.microsoft.com/bing/v5.0/images/search"
 
-Image = (client, auth, params) ->
+Image = (client, params) ->
   return (callback) ->
     getImg = (params, callback) ->
       client.http(IMAGE_SEARCH_URL)
         .query(params)
-        .headers(Authorization: "Basic #{auth}")
+        .headers("Ocp-Apim-Subscription-Key": ACCOUNT_KEY)
         .get() (err, res, body) ->
           if err
             callback "Failed to search: " + err
             return
           try
-            images = JSON.parse(body).d.results
+            images = JSON.parse(body).value
             image = client.random images
-            callback image.MediaUrl
+            callback image.contentUrl
           catch error
             callback err, body
 
@@ -38,14 +38,11 @@ module.exports = (robot) ->
     query = msg.match[1]?.trim()
 
     params =
-      Query: "'#{query}'"
-      Adult: "'#{ADULT}'"
-      $format: "json"
-      $top: 25
+      q: "'#{query}'"
+      safeSearch: ADULT
+      count: 25
 
-    auth = new Buffer(":#{ACCOUNT_KEY}").toString('base64')
-
-    Image(msg, auth, params) (err, url) ->
+    Image(msg, params) (err, url) ->
       if err
         msg.send err
         robot.emit 'error', err
